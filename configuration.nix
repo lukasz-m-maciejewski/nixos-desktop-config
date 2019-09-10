@@ -32,11 +32,6 @@
 
   networking.hostName = "Curry"; # Define your hostname.
   networking.networkmanager.enable = true;
-  #networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   # Select internationalisation properties.
   i18n = {
@@ -73,6 +68,23 @@
 
     neovim
     python37Packages.pynvim
+
+    acpitool
+    compton
+    dmenu
+    dunst
+    htop
+    rxvt_unicode
+    tmux
+    tree
+    zathura
+    smplayer
+    ranger
+    libreoffice
+    libnotify
+    networkmanagerapplet
+    pavucontrol
+    lxappearance
   ];
 
   services.udev.packages = with pkgs; [
@@ -100,19 +112,108 @@
   # Enable sound.
   sound.enable = true;
 
+  # services.xserver = {
+  #   # Enable the X11 windowing system.
+  #   enable = true;
+  #   layout = "pl";
+  #   xkbOptions = "ctrl:nocaps";
+  #   # Enable touchpad support.
+  #   libinput = {
+  #     enable = true;
+  #     naturalScrolling = true;
+  #   };
 
-  # Enable the X11 windowing system.
-  services.xserver.enable = true;
-  services.xserver.layout = "pl";
-  services.xserver.xkbOptions = "ctrl:nocaps";
+  #   # Enable the KDE Desktop Environment.
+  #   displayManager.sddm.enable = true;
+  #   desktopManager.plasma5.enable = true;
 
-  # Enable touchpad support.
-  services.xserver.libinput.enable = true;
-  services.xserver.libinput.naturalScrolling = true;
+  #   windowManager.xmonad = {
+  #     enable = true;
+  #     enableContribAndExtras = true;
+  #     extraPackages = haskellPackages: [
+  #       haskellPackages.xmonad-contrib
+  #       haskellPackages.xmonad-extras
+  #       haskellPackages.xmonad
+  #     ];
+  #   };
+  #   windowManager.default = "xmonad";
+  # };
 
-  # Enable the KDE Desktop Environment.
-  services.xserver.displayManager.sddm.enable = true;
-  services.xserver.desktopManager.plasma5.enable = true;
+  environment.pathsToLink = [ "/libexec" ]; # links /libexec from derivations to /run/current-system/sw
+
+  services.xserver = {
+    enable = true;
+    layout = "pl";
+    xkbOptions = "ctrl:nocaps";
+    # Enable touchpad support.
+    libinput = {
+      enable = true;
+      naturalScrolling = true;
+    };
+
+    displayManager.lightdm.enable = true;
+
+    desktopManager = {
+      default = "none";
+      xterm.enable = false;
+    };
+
+    windowManager.i3 = {
+      enable = true;
+      package = pkgs.i3-gaps;
+      extraPackages = with pkgs; [
+        dmenu #application launcher most people use
+        i3status # gives you the default i3 status bar
+        i3lock #default i3 screen locker
+        i3blocks #if you are planning on using i3blocks over i3status
+        clipmenu
+     ];
+    };
+  };
+
+  services.gnome3 = {
+    gnome-keyring.enable = true;
+    seahorse.enable = true;
+  };
+  #security.pam.services.lightdm.enable = true;
+
+  programs.dconf.enable = true;
+  services.dbus.packages = [ pkgs.gnome3.dconf ];
+
+  # services.xserver = {
+  #   enable = true;
+  #   layout = "pl";
+  #   xkbOptions = "ctrl:nocaps";
+  #   # Enable touchpad support.
+  #   libinput = {
+  #     enable = true;
+  #     naturalScrolling = true;
+  #   };
+  #   desktopManager = {
+  #     default = "xfce";
+  #     xterm.enable = false;
+  #     xfce = {
+  #       enable = true;
+  #       noDesktop = true;
+  #       enableXfwm = false;
+  #     };
+  #   };
+  #   windowManager.i3 = {
+  #     enable = true;
+  #     package = pkgs.i3-gaps;
+  #     extraPackages = with pkgs; [
+  #       dmenu #application launcher most people use
+  #     ];
+  #   };
+  # };
+
+  services.compton = {
+    enable          = true;
+    fade            = true;
+    inactiveOpacity = "0.9";
+    shadow          = true;
+    fadeDelta       = 4;
+  };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   # users.users.guest = {
@@ -143,6 +244,7 @@
       inconsolata
       ubuntu_font_family
       ttf_bitstream_vera
+      hermit
     ];
   };
 
@@ -151,7 +253,7 @@
     isNormalUser = true;
     home = "/home/lukaszm";
     uid = 1000;
-    extraGroups = ["wheel" "networkmanager" ];
+    extraGroups = ["wheel" "networkmanager" "audio"];
   };
 
   # This value determines the NixOS release with which your system is to be
