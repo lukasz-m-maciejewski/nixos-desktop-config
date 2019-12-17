@@ -85,6 +85,12 @@
     networkmanagerapplet
     pavucontrol
     lxappearance
+    termite
+
+    wmctrl
+    rofi
+
+    steam
   ];
 
   services.udev.packages = with pkgs; [
@@ -151,11 +157,16 @@
       naturalScrolling = true;
     };
 
-    displayManager.lightdm.enable = true;
+#    displayManager.lightdm.enable = true;
+    displayManager.sddm.enable = true;
+      #   # Enable the KDE Desktop Environment.
+  #   displayManager.sddm.enable = true;
+  #   desktopManager.plasma5.enable = true;
 
     desktopManager = {
       default = "none";
       xterm.enable = false;
+      plasma5.enable = true;
     };
 
     windowManager.i3 = {
@@ -169,6 +180,7 @@
         clipmenu
      ];
     };
+    windowManager.default = "i3";
   };
 
   services.gnome3 = {
@@ -209,9 +221,15 @@
 
   services.compton = {
     enable          = true;
+
+    backend         = "glx";
+    vSync           = "opengl";
+
+    opacityRules = [ "99:class_g = 'konsole'" ];
+    shadow          = false;
     fade            = true;
     inactiveOpacity = "0.9";
-    shadow          = true;
+
     fadeDelta       = 4;
   };
 
@@ -245,6 +263,7 @@
       ubuntu_font_family
       ttf_bitstream_vera
       hermit
+      helvetica-neue-lt-std
     ];
   };
 
